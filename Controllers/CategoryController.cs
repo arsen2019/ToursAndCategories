@@ -13,10 +13,10 @@ namespace ToursAndCategories.Controllers
         public CategoryController(IConfiguration configuration)
         {
             Configuration = configuration;
-            connectionString = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
+            connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
         }
         private IConfiguration Configuration;
-        SqlConnection connectionString;
+        SqlConnection connection;
         SqlCommand command;
         SqlDataAdapter dataAdapter;
         DataTable dataTable;
@@ -27,14 +27,14 @@ namespace ToursAndCategories.Controllers
         {
 
             dataTable = new DataTable();
-            command = new SqlCommand("select * from Category", connectionString);
-            connectionString.Open();
+            command = new SqlCommand("select * from Category", connection);
+            connection.Open();
 
             SqlDataAdapter adapter = new SqlDataAdapter(command);
             adapter.Fill(dataTable);
 
 
-            connectionString.Close();
+            connection.Close();
             return Json(dataTable);
         }
 
@@ -43,12 +43,12 @@ namespace ToursAndCategories.Controllers
         public ActionResult Create(Category item)
         {
 
-            connectionString.Open();
+            connection.Open();
 
             using (SqlCommand command = new SqlCommand(@"insert into Category (Title)
 	            values
                 (@Title)
-                ", connectionString))
+                ", connection))
             {
                 parameter =  new SqlParameter() { ParameterName = "@Title", SqlDbType = SqlDbType.NVarChar, Value = item.Title };
 
@@ -62,7 +62,7 @@ namespace ToursAndCategories.Controllers
 
             }
 
-            connectionString.Close();
+            connection.Close();
 
             parameter = null;
 
@@ -81,13 +81,13 @@ namespace ToursAndCategories.Controllers
 
 
 
-            command = new SqlCommand("select * from Category where Id=@Id", connectionString);
+            command = new SqlCommand("select * from Category where Id=@Id", connection);
 
             dataTable = new DataTable();
 
             try
             {
-                connectionString.Open();
+                connection.Open();
 
                 command.Parameters.Add(parameter);
 
@@ -110,7 +110,7 @@ namespace ToursAndCategories.Controllers
             }
             finally
             {
-                connectionString.Close();
+                connection.Close();
             }
         }
 
@@ -124,7 +124,7 @@ namespace ToursAndCategories.Controllers
 
                 command = new SqlCommand(@"update Category set 
                                             [Title] = @Title       
-                                        where Id=@Id", connectionString);
+                                        where Id=@Id", connection);
 
                 List<SqlParameter> parameters = new List<SqlParameter>
                 {
@@ -132,7 +132,7 @@ namespace ToursAndCategories.Controllers
                     new SqlParameter() { ParameterName = "@Title", SqlDbType = SqlDbType.NVarChar, Value = Title },
                     
                 };
-                connectionString.Open();
+                connection.Open();
 
                 command.Parameters.AddRange(parameters.ToArray());
 
@@ -147,7 +147,7 @@ namespace ToursAndCategories.Controllers
             {
                 return BadRequest(ex);
             }
-            finally { connectionString.Close(); }
+            finally { connection.Close(); }
         }
 
         
@@ -162,8 +162,8 @@ namespace ToursAndCategories.Controllers
 
 
 
-                command = new SqlCommand("delete from Category where Id=@Id", connectionString);
-                connectionString.Open();
+                command = new SqlCommand("delete from Category where Id=@Id", connection);
+                connection.Open();
                 command.Parameters.Add(parameter);
                 int rowsEffected = command.ExecuteNonQuery();
                 if (rowsEffected > 0)
@@ -176,7 +176,50 @@ namespace ToursAndCategories.Controllers
             {
                 return BadRequest(ef.Message);
             }
-            finally { connectionString.Close(); }
+            finally { connection.Close(); }
+        }
+
+        [Route("Delete/MultipleCategories")]
+        [HttpDelete]
+        public ActionResult DeleteMultiple(List<int> IDs)
+        {
+            try
+            {
+
+                string query = "delete from Category where Id in {0}";
+
+
+                command = new SqlCommand($"delete from Category where Id in ({generateParameterNames(IDs.Count)})", connection);
+                connection.Open();
+
+                for(int i = 0; i < IDs.Count; i++)
+                {
+                    command.Parameters.Add(new SqlParameter() { ParameterName = $"ID{i}", SqlDbType = SqlDbType.Int, Value = IDs[i] });
+                }
+
+                
+                int rowsEffected = command.ExecuteNonQuery();
+                if (rowsEffected > 0)
+                {
+                    return Ok(new { Message = $"Deleted {IDs.Count} Records!" });
+                }
+                return BadRequest(new { Message = "Record Not found!" });
+            }
+            catch (Exception ef)
+            {
+                return BadRequest(ef);
+            }
+            finally { connection.Close(); }
+        }
+
+        private string generateParameterNames(int count)
+        {
+            string[] paramNames = new string[count];
+            for (int i = 0; i < count; i++)
+            {
+                paramNames[i] = $"@ID{i}";
+            }
+            return string.Join(",", paramNames);
         }
     }
 }
