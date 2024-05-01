@@ -185,25 +185,23 @@ namespace ToursAndCategories.Controllers
         {
             try
             {
+               
 
-                string query = "delete from Category where Id in {0}";
-
-
-                command = new SqlCommand($"delete from Category where Id in ({generateParameterNames(IDs.Count)})", connection);
                 connection.Open();
 
-                for(int i = 0; i < IDs.Count; i++)
+                foreach(int ID in IDs)
                 {
-                    command.Parameters.Add(new SqlParameter() { ParameterName = $"ID{i}", SqlDbType = SqlDbType.Int, Value = IDs[i] });
+                    command = new SqlCommand("DeleteCategory", connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@CategoryId", ID);
+                    command.ExecuteNonQuery();
+               
                 }
 
                 
-                int rowsEffected = command.ExecuteNonQuery();
-                if (rowsEffected > 0)
-                {
-                    return Ok(new { Message = $"Deleted {IDs.Count} Records!" });
-                }
-                return BadRequest(new { Message = "Record Not found!" });
+                return Ok(new { Message = $"Deleted {IDs.Count} Records!" });
+                
+
             }
             catch (Exception ef)
             {
@@ -212,14 +210,5 @@ namespace ToursAndCategories.Controllers
             finally { connection.Close(); }
         }
 
-        private string generateParameterNames(int count)
-        {
-            string[] paramNames = new string[count];
-            for (int i = 0; i < count; i++)
-            {
-                paramNames[i] = $"@ID{i}";
-            }
-            return string.Join(",", paramNames);
-        }
     }
 }
