@@ -12,26 +12,13 @@ namespace ToursAndCategories.Controllers
    //[ApiController]
     public class ToursController : Controller
     {
-
-        public ToursController(IConfiguration configuration)
-        {
-            Configuration = configuration;
-            connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
-        }
-        private IConfiguration Configuration;
-        SqlConnection connection;
-        SqlCommand command;
-        SqlDataAdapter dataAdapter;
-        DataTable dataTable;
         List<SqlParameter> parameters = null;
 
         [HttpGet]
         public JsonResult GetAll()
         {
             string sql = "select * from Tour";
-
-            var result = new ToursAndCategories_BLL().GetAllBLL(sql);
-            return Json(result);
+            return new ToursAndCategories_BLL().GetAllBLL(sql);
         }
 
         [Route("Create")]

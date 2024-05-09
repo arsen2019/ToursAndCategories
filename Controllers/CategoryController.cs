@@ -2,6 +2,8 @@
 using System.Data.SqlClient;
 using System.Data;
 using ToursAndCategories.Models;
+using ToursAndCategories.BLL;
+
 
 namespace ToursAndCategories.Controllers
 {
@@ -10,205 +12,88 @@ namespace ToursAndCategories.Controllers
     public class CategoryController : Controller
     {
 
-        public CategoryController(IConfiguration configuration)
-        {
-            Configuration = configuration;
-            connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
-        }
-        private IConfiguration Configuration;
-        SqlConnection connection;
-        SqlCommand command;
-        SqlDataAdapter dataAdapter;
-        DataTable dataTable;
-        SqlParameter parameter;
+        List<SqlParameter> parameter;
 
         [HttpGet]
         public JsonResult GetAll()
         {
-
-            dataTable = new DataTable();
-            command = new SqlCommand("select * from Category", connection);
-            connection.Open();
-
-            SqlDataAdapter adapter = new SqlDataAdapter(command);
-            adapter.Fill(dataTable);
-
-
-            connection.Close();
-            return Json(dataTable);
+            string sql = "select * from Category";
+            return new ToursAndCategories_BLL().GetAllBLL(sql);
         }
 
         [Route("Create")]
         [HttpPost]
         public ActionResult Create(Category item)
         {
+            string sql = @"insert into Category (Title)
+        	            values
+                        (@Title)";
 
-            connection.Open();
-
-            using (SqlCommand command = new SqlCommand(@"insert into Category (Title)
-	            values
-                (@Title)
-                ", connection))
+            parameter = new List<SqlParameter>
             {
-                parameter =  new SqlParameter() { ParameterName = "@Title", SqlDbType = SqlDbType.NVarChar, Value = item.Title };
+                new SqlParameter() { ParameterName = "@Title", SqlDbType = SqlDbType.NVarChar, Value = item.Title }
+            };
 
+            return new ToursAndCategories_BLL().CreateCategoryBLL(sql, parameter);
 
-
-
-                command.Parameters.Add(parameter);
-
-                command.ExecuteNonQuery();
-
-
-            }
-
-            connection.Close();
-
-            parameter = null;
-
-            return Ok(new { Message = "Record Added" });
-        }
+        }       
 
         [Route("GetById/{id}")]
         [HttpGet]
         public JsonResult Read(int id)
         {
 
-
-
-            parameter = new SqlParameter() { ParameterName = "@Id", SqlDbType = SqlDbType.Int, Value = id };
-
-
-
-
-            command = new SqlCommand("select * from Category where Id=@Id", connection);
-
-            dataTable = new DataTable();
-
-            try
+            parameter = new List<SqlParameter>
             {
-                connection.Open();
+                new SqlParameter() { ParameterName = "@Id", SqlDbType = SqlDbType.Int, Value = id }
+            };
 
-                command.Parameters.Add(parameter);
-
-                dataAdapter = new SqlDataAdapter(command);
-                dataAdapter.Fill(dataTable);
-
-                if (dataTable.Rows.Count > 0)
-                {
-                    return Json(dataTable);
-                }
-                else
-                {
-                    return Json("Not Found");
-                }
-
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-            finally
-            {
-                connection.Close();
-            }
+            string sql = "select * from Category where Id=@Id";
+           
+            return new ToursAndCategories_BLL().ReadBLL(sql, parameter);
         }
 
-        
         [Route("Edit")]
         [HttpPut]
         public ActionResult Edit(int Id, string Title)
         {
-            try
-            {
 
-                command = new SqlCommand(@"update Category set 
-                                            [Title] = @Title       
-                                        where Id=@Id", connection);
+            string sql = @"update Category set 
+                           [Title] = @Title       
+                           where Id=@Id";
 
-                List<SqlParameter> parameters = new List<SqlParameter>
-                {
-                    new SqlParameter() { ParameterName = "@Id", SqlDbType = SqlDbType.Int, Value = Id },
-                    new SqlParameter() { ParameterName = "@Title", SqlDbType = SqlDbType.NVarChar, Value = Title },
-                    
-                };
-                connection.Open();
+             parameter = new List<SqlParameter>
+                        {
+                            new SqlParameter() { ParameterName = "@Id", SqlDbType = SqlDbType.Int, Value = Id },
+                            new SqlParameter() { ParameterName = "@Title", SqlDbType = SqlDbType.NVarChar, Value = Title },
 
-                command.Parameters.AddRange(parameters.ToArray());
+                        };
 
-                int effectedRows = command.ExecuteNonQuery();
-                if (effectedRows > 0)
-                {
-                    return Ok(new { Message = "Record Updated" });
-                }
-                return BadRequest(new { Message = "Record Not found!" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-            finally { connection.Close(); }
+            return new ToursAndCategories_BLL().EditBLL(sql, parameter);
         }
 
-        
         [Route("Delete/{id}")]
         [HttpDelete]
         public ActionResult Delete(int id)
         {
-            try
+            string sql = "delete from Category where Id=@Id";
+
+            parameter = new List<SqlParameter>
             {
+                new SqlParameter { ParameterName = "@Id", SqlDbType = SqlDbType.Int, Value = id }
+            };
 
-                parameter = new SqlParameter { ParameterName = "@Id", SqlDbType = SqlDbType.Int, Value = id };
-
-
-
-                command = new SqlCommand("delete from Category where Id=@Id", connection);
-                connection.Open();
-                command.Parameters.Add(parameter);
-                int rowsEffected = command.ExecuteNonQuery();
-                if (rowsEffected > 0)
-                {
-                    return Ok(new { Message = "Record Deleted!" });
-                }
-                return BadRequest(new { Message = "Record Not found!" });
-            }
-            catch (Exception ef)
-            {
-                return BadRequest(ef.Message);
-            }
-            finally { connection.Close(); }
+          
+            return new ToursAndCategories_BLL().DeleteBLL(sql, parameter);
         }
 
         [Route("Delete/MultipleCategories")]
         [HttpDelete]
         public ActionResult DeleteMultiple(List<int> IDs)
         {
-            try
-            {
-               
+            string sql = "DeleteCategory";
 
-                connection.Open();
-
-                foreach(int ID in IDs)
-                {
-                    command = new SqlCommand("DeleteCategory", connection);
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@CategoryId", ID);
-                    command.ExecuteNonQuery();
-               
-                }
-
-                
-                return Ok(new { Message = $"Deleted {IDs.Count} Records!" });
-                
-
-            }
-            catch (Exception ef)
-            {
-                return BadRequest(ef);
-            }
-            finally { connection.Close(); }
+            return new ToursAndCategories_BLL().DeleteMultipleBLL(sql, IDs);
         }
-
     }
 }
