@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.SqlClient;
+using System.Reflection.Metadata;
 
 
 namespace ToursAndCategories.BLL
@@ -10,7 +11,7 @@ namespace ToursAndCategories.BLL
        
             private static readonly SqlConnection _connection = new SqlConnection("Server=(localdb)\\Tours; Database=ToursAndCategories; Trusted_connection=True;");
 
-            public  DataTable GetAllBLL(string sql)
+            public  JsonResult GetAllBLL(string sql)
             {
                 DataTable DataTable = new DataTable();
                 SqlCommand Command = new SqlCommand(sql, _connection);
@@ -21,7 +22,7 @@ namespace ToursAndCategories.BLL
 
                 _connection.Close();
 
-                return DataTable;
+                return Json(DataTable);
 
             }
 
@@ -73,6 +74,22 @@ namespace ToursAndCategories.BLL
                 _connection.Close();
             }
 
+        }
+
+        public ActionResult CreateCategoryBLL(string sql, List<SqlParameter> Parameters)
+        {
+            _connection.Open();
+
+            using (SqlCommand Command = new SqlCommand(sql, _connection))
+            {   
+                Command.Parameters.AddRange(Parameters.ToArray());
+
+                Command.ExecuteNonQuery();
+            }
+
+            _connection.Close();
+
+            return Ok(new { Message = "Record Added" });
         }
 
         public JsonResult ReadBLL(string sql, List<SqlParameter> Parameters) 
@@ -191,6 +208,35 @@ namespace ToursAndCategories.BLL
             }
             finally { _connection.Close(); }
 
+        }
+
+        public ActionResult DeleteMultipleBLL(string sql, List<int> IDs)
+        {
+            try
+            {
+
+
+                _connection.Open();
+
+                foreach (int ID in IDs)
+                {
+                    SqlCommand Command = new SqlCommand(sql, _connection); ;
+                    Command.CommandType = CommandType.StoredProcedure;
+                    Command.Parameters.AddWithValue("@CategoryId", ID);
+                    Command.ExecuteNonQuery();
+
+                }
+
+
+                return Ok(new { Message = $"Deleted {IDs.Count} Records!" });
+
+
+            }
+            catch (Exception ef)
+            {
+                return BadRequest(ef);
+            }
+            finally { _connection.Close(); }
         }
     }
 }
