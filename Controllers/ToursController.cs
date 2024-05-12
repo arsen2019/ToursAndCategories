@@ -3,7 +3,6 @@ using System.Data;
 using System.Data.SqlClient;
 using ToursAndCategories.BLL;
 using ToursAndCategories.Models;
-using static ToursAndCategories.BLL.ToursAndCategories_BLL;
 
 
 namespace ToursAndCategories.Controllers
