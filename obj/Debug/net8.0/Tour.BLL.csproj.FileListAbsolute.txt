@@ -1,0 +1,12 @@
+C:\Users\HP\source\repos\Tour.BLL\bin\Debug\net8.0\Tour.BLL.deps.json
+C:\Users\HP\source\repos\Tour.BLL\bin\Debug\net8.0\Tour.BLL.dll
+C:\Users\HP\source\repos\Tour.BLL\bin\Debug\net8.0\Tour.BLL.pdb
+C:\Users\HP\source\repos\Tour.BLL\obj\Debug\net8.0\Tour.BLL.csproj.AssemblyReference.cache
+C:\Users\HP\source\repos\Tour.BLL\obj\Debug\net8.0\Tour.BLL.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\HP\source\repos\Tour.BLL\obj\Debug\net8.0\Tour.BLL.AssemblyInfoInputs.cache
+C:\Users\HP\source\repos\Tour.BLL\obj\Debug\net8.0\Tour.BLL.AssemblyInfo.cs
+C:\Users\HP\source\repos\Tour.BLL\obj\Debug\net8.0\Tour.BLL.csproj.CoreCompileInputs.cache
+C:\Users\HP\source\repos\Tour.BLL\obj\Debug\net8.0\Tour.BLL.dll
+C:\Users\HP\source\repos\Tour.BLL\obj\Debug\net8.0\refint\Tour.BLL.dll
+C:\Users\HP\source\repos\Tour.BLL\obj\Debug\net8.0\Tour.BLL.pdb
+C:\Users\HP\source\repos\Tour.BLL\obj\Debug\net8.0\ref\Tour.BLL.dll
