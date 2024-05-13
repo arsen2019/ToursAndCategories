@@ -57,7 +57,7 @@ namespace ToursAndCategories.BLL
 
                 if (effectedRows > 0)
                 {
-                    return Ok(new { Message = $"Record Added with Category" });
+                    return Ok(new { Message = $"Record Added with Category!" });
                 }
                 else
                 {
@@ -198,7 +198,7 @@ namespace ToursAndCategories.BLL
                 {
                     return Json("No Records Found");
                 }
-
+                           
 
             }
             catch (Exception ex)
