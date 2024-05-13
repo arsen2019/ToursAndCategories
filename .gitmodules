@@ -1,0 +1,3 @@
+[submodule "Tour.BLL"]
+	path = Tour.BLL
+	url = https://github.com/arsen2019/Tour.BLL.git
