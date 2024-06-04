@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.SqlClient;
 using ToursAndCategories.BLL;
 using ToursAndCategories.Models;
 
 
+
 namespace ToursAndCategories.Controllers
 {
     [Route("api/[controller]")]
-   //[ApiController]
+    [ApiController]
     public class ToursController : Controller
     {
         List<SqlParameter> parameters = null;
@@ -86,7 +88,7 @@ namespace ToursAndCategories.Controllers
         
 
         [Route("Delete/{id}")]
-        [HttpDelete]
+        [HttpDelete, Authorize]
         public ActionResult Delete(int id)
         {
 
