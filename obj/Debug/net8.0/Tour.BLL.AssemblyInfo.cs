@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Tour.BLL")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a54911632f453c0079aa3c0ad63c907338a6e380")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b57ac606f4da63be77139737f81c3cbf81737232")]
 [assembly: System.Reflection.AssemblyProductAttribute("Tour.BLL")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Tour.BLL")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

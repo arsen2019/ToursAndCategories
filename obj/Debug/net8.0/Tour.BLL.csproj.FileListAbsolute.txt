@@ -10,3 +10,4 @@ C:\Users\HP\source\repos\Tour.BLL\obj\Debug\net8.0\Tour.BLL.dll
 C:\Users\HP\source\repos\Tour.BLL\obj\Debug\net8.0\refint\Tour.BLL.dll
 C:\Users\HP\source\repos\Tour.BLL\obj\Debug\net8.0\Tour.BLL.pdb
 C:\Users\HP\source\repos\Tour.BLL\obj\Debug\net8.0\ref\Tour.BLL.dll
+C:\Users\HP\source\repos\Tour.BLL\obj\Debug\net8.0\Tour.BLL.sourcelink.json
